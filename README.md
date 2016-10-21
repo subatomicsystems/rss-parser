@@ -5,6 +5,7 @@ This is a fork from https://github.com/bobby-brennan/rss-parser
 But it has the following modifications:
 * It uses the request package to allow for better handling of 301 redirects
 * It has an alternative parse function call that allows an options object to be passed.
+* Categories will by simplified from objects: {_: "myCategory", $: [myCategoryAttributes]} to "myCategory"
 
 ## Installation
 

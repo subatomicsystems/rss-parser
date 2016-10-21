@@ -17,44 +17,44 @@ describe('Parser', function() {
       if (process.env.WRITE_GOLDEN) {
         FS.writeFileSync(OUT_DIR + '/' + name + '.json', JSON.stringify(parsed, null, 2));
       } else {
-        var expected = FS.readFileSync(OUT_DIR + '/' + name + '.json', 'utf8')
+        var expected = FS.readFileSync(OUT_DIR + '/' + name + '.json', 'utf8');
         expected = JSON.parse(expected);
         Expect(parsed).to.deep.equal(expected);
       }
       done();
     })
-  }
+  };
 
   it('should parse Reddit', function(done) {
     testParseForFile('reddit', 'rss', done);
-  })
+  });
 
   it('should not parse craigslist (RSS 1.0)', function(done) {
     Parser.parseFile(__dirname + '/input/craigslist.rss', function(err, parsed) {
       Expect(err.indexOf('not yet implemented')).to.not.equal(-1);
       done();
     })
-  })
+  });
 
   it('should parse atom', function(done) {
     testParseForFile('reddit-atom', 'rss', done);
-  })
+  });
 
   it('should parse atom feed', function(done) {
     testParseForFile('gulp-atom', 'atom', done);
-  })
+  });
 
   it('should parse reddits new feed', function(done) {
     testParseForFile('reddit-home', 'rss', done);
-  })
+  });
 
   it('should parse with missing fields', function(done) {
     testParseForFile('missing-fields', 'atom', done)
-  })
+  });
 
   it('should parse heise', function(done) {
     testParseForFile('heise', 'atom', done);
-  })
+  });
 
   it('should parse Instant Article', function(done) {
     testParseForFile('instant-article', 'rss', done);
@@ -66,4 +66,4 @@ describe('Parser', function() {
   it('should parse podcasts', function(done) {
     testParseForFile('narro', 'rss', done);
   });
-})
+});

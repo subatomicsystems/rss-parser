@@ -104,12 +104,14 @@ var parseRSS2 = function(xmlObj, options, callback) {
   TOP_FIELDS.forEach(function(f) {
     if (channel[f]) json.feed[f] = channel[f][0];
   });
-  var items = channel.item;
-  (items || []).forEach(function(item) {
+  var items = channel.item || [];
+  items.forEach(function(item) {
     var entry = {};
     if (options.includeAllFields) {
       for (var fieldName in item) {
-        entry[fieldName] = item[fieldName][0];
+        if (item.hasOwnProperty(fieldName)) {
+          entry[fieldName] = item[fieldName][0];
+        }
       }
     } else {
       ITEM_FIELDS.forEach(function(f) {
@@ -120,7 +122,7 @@ var parseRSS2 = function(xmlObj, options, callback) {
       entry.enclosure = item.enclosure[0].$;
     }
     if (item.description) {
-      entry.content = getContent(item.description[0]);
+      entry.content = getContent(item.description[0]).replace(/&#xD;/g, '\n');
       entry.contentSnippet = getSnippet(entry.content);
     }
     if (item.guid) {
@@ -128,6 +130,12 @@ var parseRSS2 = function(xmlObj, options, callback) {
       if (entry.guid._) entry.guid = entry.guid._;
     }
     if (item.category) entry.categories = item.category;
+    if (entry.categories && entry.categories[0] && entry.categories[0]._) {
+      // map category object to string
+      entry.categories = entry.categories.map(function(category) {
+        return category._;
+      });
+    }
     json.feed.entries.push(entry);
   });
   if (xmlObj.rss.$['xmlns:itunes']) {
@@ -146,7 +154,7 @@ var parseRSS2 = function(xmlObj, options, callback) {
 var decorateItunes = function decorateItunes(json, channel) {
   var items = channel.item || [],
       entry = {};
-  json.feed.itunes = {}
+  json.feed.itunes = {};
 
   if (channel['itunes:owner']) {
     var owner = {},
